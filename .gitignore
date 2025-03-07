@@ -1,0 +1,16 @@
+# Composer
+/vendor
+composer.lock
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor directories and files
+.idea
+.vscode
+*.sublime-project
+*.sublime-workspace
+
+# Kirby cache
+/site/cache
