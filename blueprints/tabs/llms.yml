@@ -1,0 +1,6 @@
+icon: book
+label: LLMs
+sections:
+  llms:
+    type: fields
+    extends: sections/llms-settings 

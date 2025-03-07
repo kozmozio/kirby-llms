@@ -1,0 +1,62 @@
+type: fields
+fields:
+  headline:
+    type: headline
+    label: LLMs Plugin Settings
+    numbered: false
+  info:
+    type: info
+    label: About
+    text: >
+      Configure how the LLMs.txt file is generated for Large Language Models.
+  llms_enabled:
+    type: toggle
+    label: Enable LLMs.txt
+    text: 
+      - Disabled
+      - Enabled
+    default: true
+    width: 1/3
+    help: Enable / Disable plugin output
+  llms_cache:
+    type: toggle
+    label: Enable Caching
+    text: 
+      - Disabled
+      - Enabled
+    default: false
+    width: 1/3
+    help: Enable caching to improve performance
+  llms_cacheDuration:
+    type: number
+    label: Cache Duration (minutes)
+    min: 1
+    default: 60
+    placeholder: 60
+    width: 1/3
+    when:
+      llms_cache: true
+  llms_add_trailing_slash:
+    type: toggle
+    label: Add Trailing Slash 
+    text: 
+      - Disabled
+      - Enabled
+    default: true
+    width: 1/3
+    help: Add "/" at the end of urls.
+  excludeTemplatesHeadline:
+    type: headline
+    label: Exclusion Settings
+    numbered: false
+    size: h2
+  llms_excludeTemplates:
+    type: tags
+    label: Exclude Templates
+    default: error,faq,faqs,faqpage,faq-page
+    help: Templates to exclude from the LLMs.txt output
+  llms_excludePages:
+    type: tags
+    label: Exclude Pages
+    default: faqs
+    help: Pages to exclude from the LLMs.txt output (by slug or URI) 

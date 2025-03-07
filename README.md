@@ -6,15 +6,18 @@ A Kirby CMS plugin that generates an `llms.txt` file in the root of your website
 
 This plugin creates an `llms.txt` file that provides structured information about your website to help Large Language Models better understand and interact with your content. Similar to how `robots.txt` works for search engines, `llms.txt` provides guidance for LLMs.
 
+![Kirby LLMs Plugin Panel Interface](kozmoz-kirby-llms.jpg)
+
 ## Features
 
 - Generates an `llms.txt` file in the root of your website in Markdown format
 - Provides a dedicated route to access the LLMs information
-- Creates proper Markdown links for pages with trailing slashes
+- Creates proper Markdown links for pages with trailing slashes (configurable)
 - Strips HTML tags from descriptions and metadata for clean output
 - Configurable exclusion of pages and templates
 - Automatic cache clearing when content changes
 - Supports configuration via your site's main config.php file
+- Panel integration for easy configuration through the Kirby admin interface
 
 ## Installation
 
@@ -32,29 +35,68 @@ composer require kozmozio/kirby-llms
 
 ## Configuration
 
+### Via Config File
+
 You can configure the plugin by adding options to your `config.php` file:
 
 ```php
 return [
   'kozmozio.llms' => [
+    'enabled' => true,
     'cache' => true,
     'cache.duration' => 60, // minutes
+    'add_trailing_slash' => true, // Whether to add trailing slashes to URLs
     'exclude' => [
-      'templates' => ['error'],
-      'pages' => ['private-page', 'another-page']
+      'templates' => ['error', 'faq', 'faqs', 'faqpage', 'faq-page'],
+      'pages' => ['faqs', 'private-page', 'another-page']
+    ],
+    'panel' => [
+      'enabled' => true,
+      'icon' => 'code',
+      'label' => 'LLMs Settings'
     ]
   ]
 ];
 ```
 
+### Via Kirby Panel
+
+The plugin also provides a panel interface for configuring the settings. To enable this, you need to add the LLMs tab to your site blueprint.
+
+1. Add the LLMs tab to your `site.yml` blueprint:
+
+```yaml
+# site.yml
+title: Site
+unlisted: true
+
+tabs:
+  # Your existing tabs...
+  
+  # LLMs settings tab
+  llms:
+    extends: tabs/llms
+```
+
+This will add a new "LLMs" tab to your site settings in the panel, where you can configure:
+- Enable/disable the LLMs.txt generation
+- Enable/disable caching
+- Set cache duration
+- Enable/disable adding trailing slashes to URLs
+- Exclude templates and pages
+
 ### Configuration Options
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
+| `enabled` | boolean | `true` | Enable or disable serving llms.txt |
 | `cache` | boolean | `false` | Enable or disable caching |
 | `cache.duration` | integer | `60` | Cache duration in minutes |
-| `exclude.templates` | array | `['error']` | Templates to exclude from the output |
+| `add_trailing_slash` | boolean | `true` | Whether to add trailing slashes to URLs in the output |
+| `exclude.templates` | array | `['error', 'faq', 'faqs', 'faqpage', 'faq-page']` | Templates to exclude from the output |
 | `exclude.pages` | array | `[]` | Pages to exclude from the output |
+| `panel.icon` | string | `'code'` | Icon to use in the panel |
+| `panel.label` | string | `'LLMs Settings'` | Label to display in the panel |
 
 ### Excluding Pages
 
@@ -63,11 +105,12 @@ You can exclude specific pages from the llms.txt output by adding their slugs to
 - Exact page ID or URI match
 - Pages with the same name in different locations (e.g., if you exclude 'inan-olcer', both 'inan-olcer' and 'team/inan-olcer' will be excluded)
 - Child pages of excluded parents
+- Pages with URIs containing specific strings (e.g., if you exclude 'faq', all pages with 'faq' in their URI will be excluded)
 
 For example:
 ```php
 'exclude' => [
-  'pages' => ['about', 'blog/private-post', 'team-member']
+  'pages' => ['about', 'blog/private-post', 'team-member', 'faqs']
 ]
 ```
 
@@ -146,10 +189,11 @@ array_push($staticRoutes, [
 3. Add examples and use cases ✓
 4. Prepare for release ✓
 
-## License
-
-MIT
-
 ## Author
 
 [Inan Olcer Kozmoz](https://kozmoz.io)
+
+
+## License
+
+MIT
