@@ -1,4 +1,4 @@
-# Kirby Kozmoz LLMs Plugin
+# Kozmoz Kirby LLMs Plugin
 
 A Kirby CMS plugin that generates an `llms.txt` file in the root of your website or responds to the `llms.txt` route with necessary information for Large Language Models (LLMs).
 
