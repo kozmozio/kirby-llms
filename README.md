@@ -2,11 +2,11 @@
 
 A Kirby CMS plugin that generates an `llms.txt` file in the root of your website or responds to the `llms.txt` route with necessary information for Large Language Models (LLMs).
 
+![Kirby LLMs Plugin Panel Interface](kozmoz-kirby-llms.jpg)
+
 ## Overview
 
 This plugin creates an `llms.txt` file that provides structured information about your website to help Large Language Models better understand and interact with your content. Similar to how `robots.txt` works for search engines, `llms.txt` provides guidance for LLMs.
-
-![Kirby LLMs Plugin Panel Interface](kozmoz-kirby-llms.jpg)
 
 ## Features
 
