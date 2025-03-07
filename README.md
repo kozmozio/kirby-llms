@@ -86,7 +86,7 @@ The plugin uses the following blueprint structure:
 
 ```
 blueprints/
-├── sections/
+├── kozmoz/
 │   └── llms-settings.yml  # The main settings section
 ├── tabs/
 │   └── llms.yml           # The tab that extends the settings section
