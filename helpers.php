@@ -111,8 +111,16 @@ function generateLlmsContent($settings) {
     $site = site();
     $content = "# " . $site->title()->value() . "\n\n";
     
-    if ($site->description()->isNotEmpty()) {
-        $content .= "> " . strip_tags($site->description()->value()) . "\n\n";
+    // Check for site description - try metaDescription first, then fall back to description
+    $description = '';
+    if ($site->metaDescription()->isNotEmpty()) {
+        $description = $site->metaDescription()->value();
+    } elseif ($site->description()->isNotEmpty()) {
+        $description = $site->description()->value();
+    }
+    
+    if (!empty($description)) {
+        $content .= "> " . strip_tags($description) . "\n\n";
     }
     
     $content .= "Generated on: " . date('Y-m-d H:i:s') . "\n\n";
@@ -135,19 +143,14 @@ function generateLlmsContent($settings) {
         
         // Filter pages by template and also by URI containing 'faq'
         $filteredPages = $pages->filter(function($page) use ($excludeTemplates) {
-            $templateName = $page->template()->name();
-            $uri = $page->uri();
-            
+            $templateName = $page->template();
+        //    echo $page->template().'<br>';
             // Exclude if template is in the exclude list
             if (in_array($templateName, $excludeTemplates)) {
                 return false;
             }
             
-            // Exclude if URI contains 'faq'
-            if (stripos($uri, 'faq') !== false) {
-                return false;
-            }
-            
+               
             return true;
         });
         
@@ -158,8 +161,8 @@ function generateLlmsContent($settings) {
     if (!empty($settings['exclude']['pages'])) {
         foreach ($settings['exclude']['pages'] as $excludePage) {
             $pages = $pages->filter(function ($page) use ($excludePage) {
-                return !str_contains($page->id(), $excludePage) && 
-                       !str_contains($page->uri(), $excludePage);
+                return $page->id() !== $excludePage && 
+                       $page->uri() !== $excludePage;
             });
         }
     }
