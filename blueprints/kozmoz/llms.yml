@@ -3,4 +3,4 @@ label: LLMs
 sections:
   llms:
     type: fields
-    extends: sections/llms-settings 
+    extends: kozmoz/llms-settings 

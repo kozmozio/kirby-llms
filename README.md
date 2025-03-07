@@ -49,11 +49,6 @@ return [
     'exclude' => [
       'templates' => ['error', 'faq', 'faqs', 'faqpage', 'faq-page'],
       'pages' => ['faqs', 'private-page', 'another-page']
-    ],
-    'panel' => [
-      'enabled' => true,
-      'icon' => 'code',
-      'label' => 'LLMs Settings'
     ]
   ]
 ];
@@ -85,6 +80,29 @@ This will add a new "LLMs" tab to your site settings in the panel, where you can
 - Enable/disable adding trailing slashes to URLs
 - Exclude templates and pages
 
+### Blueprint Structure
+
+The plugin uses the following blueprint structure:
+
+```
+blueprints/
+├── sections/
+│   └── llms-settings.yml  # The main settings section
+├── tabs/
+│   └── llms.yml           # The tab that extends the settings section
+```
+
+You can customize these blueprints by copying them to your site's blueprint directory and modifying them as needed:
+
+```
+site/
+└── blueprints/
+    ├── sections/
+    │   └── llms-settings.yml  # Your customized settings
+    └── tabs/
+        └── llms.yml           # Your customized tab
+```
+
 ### Configuration Options
 
 | Option | Type | Default | Description |
@@ -95,8 +113,6 @@ This will add a new "LLMs" tab to your site settings in the panel, where you can
 | `add_trailing_slash` | boolean | `true` | Whether to add trailing slashes to URLs in the output |
 | `exclude.templates` | array | `['error', 'faq', 'faqs', 'faqpage', 'faq-page']` | Templates to exclude from the output |
 | `exclude.pages` | array | `[]` | Pages to exclude from the output |
-| `panel.icon` | string | `'code'` | Icon to use in the panel |
-| `panel.label` | string | `'LLMs Settings'` | Label to display in the panel |
 
 ### Excluding Pages
 

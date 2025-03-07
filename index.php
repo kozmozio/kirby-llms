@@ -72,9 +72,9 @@ Kirby::plugin('kozmozio/llms', [
         }
     ],
     
-    // Register the blueprints
+    // Register the blueprints  
     'blueprints' => [
-        'tabs/llms' => __DIR__ . '/blueprints/tabs/llms.yml',
-        'sections/llms-settings' => __DIR__ . '/blueprints/sections/llms-settings.yml'
+        'kozmoz/llms' => __DIR__ . '/blueprints/kozmoz/llms.yml',
+        'kozmoz/llms-settings' => __DIR__ . '/blueprints/kozmoz/llms-settings.yml'
     ]
 ]); 
