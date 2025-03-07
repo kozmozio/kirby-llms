@@ -152,4 +152,4 @@ MIT
 
 ## Author
 
-[Kozmozio](https://kozmoz.io)
+[Inan Olcer Kozmoz](https://kozmoz.io)
