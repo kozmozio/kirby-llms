@@ -9,6 +9,15 @@ fields:
     label: About
     text: >
       Configure how the LLMs.txt file is generated for Large Language Models.
+  sitemap_enabled:
+    type: toggle
+    label: Enable Sitemap.xml
+    text: 
+      - Disabled
+      - Enabled
+    default: true
+    width: 1/4
+    help: Enable XML sitemap generation using the same page list as LLMs.txt
   llms_enabled:
     type: toggle
     label: Enable LLMs.txt
@@ -16,7 +25,7 @@ fields:
       - Disabled
       - Enabled
     default: true
-    width: 1/3
+    width: 1/4
     help: Enable / Disable plugin output
   llms_cache:
     type: toggle
@@ -25,7 +34,7 @@ fields:
       - Disabled
       - Enabled
     default: false
-    width: 1/3
+    width: 1/4
     help: Enable caching to improve performance
   llms_cacheDuration:
     type: number
@@ -33,7 +42,7 @@ fields:
     min: 1
     default: 60
     placeholder: 60
-    width: 1/3
+    width: 1/4
     when:
       llms_cache: true
   llms_add_trailing_slash:
@@ -43,8 +52,9 @@ fields:
       - Disabled
       - Enabled
     default: true
-    width: 1/3
+    width: 1/4
     help: Add "/" at the end of urls.
+
   excludeTemplatesHeadline:
     type: headline
     label: Exclusion Settings

@@ -10,7 +10,7 @@
  * @license   MIT
  */
 
-@include_once __DIR__ . '/vendor/autoload.php';
+// @include_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/helpers.php';
 
 Kirby::plugin('kozmozio/llms', [
@@ -52,6 +52,42 @@ Kirby::plugin('kozmozio/llms', [
                 
                 // Return the content as a plain text response
                 return new Kirby\Http\Response($content, 'text/plain');
+            }
+        ],
+        [
+            'pattern' => 'sitemap.xml',
+            'action' => function () {
+                // Get plugin settings
+                $settings = llms();
+                
+                // Check if sitemap is enabled
+                if (!$settings['sitemap_enabled']) {
+                    return new Kirby\Http\Response('Sitemap is disabled', 'text/plain', 404);
+                }
+                
+                // Check if caching is enabled
+                if ($settings['cache']) {
+                    $cache = kirby()->cache('kozmozio.llms');
+                    $cacheId = 'sitemap_content';
+                    
+                    // Try to get from cache first
+                    $content = $cache->get($cacheId);
+                    
+                    if ($content) {
+                        return new Kirby\Http\Response($content, 'application/xml');
+                    }
+                }
+                
+                // Generate the sitemap content
+                $content = generateSitemapContent($settings);
+                
+                // Cache the content if caching is enabled
+                if ($settings['cache']) {
+                    $cache->set($cacheId, $content, $settings['cache.duration'] * 60);
+                }
+                
+                // Return the content as XML response
+                return new Kirby\Http\Response($content, 'application/xml');
             }
         ]
     ],

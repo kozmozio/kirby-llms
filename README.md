@@ -11,7 +11,8 @@ This plugin creates an `llms.txt` file that provides structured information abou
 ## Features
 
 - Generates an `llms.txt` file in the root of your website in Markdown format
-- Provides a dedicated route to access the LLMs information
+- Generates an XML sitemap at `sitemap.xml` using the same page filtering as LLMs.txt
+- Provides dedicated routes to access both LLMs information and sitemap
 - Creates proper Markdown links for pages with trailing slashes (configurable)
 - Strips HTML tags from descriptions and metadata for clean output
 - Configurable exclusion of pages and templates
@@ -46,6 +47,7 @@ return [
     'cache' => true,
     'cache.duration' => 60, // minutes
     'add_trailing_slash' => true, // Whether to add trailing slashes to URLs
+    'sitemap_enabled' => true, // Enable XML sitemap generation
     'exclude' => [
       'templates' => ['error', 'faq', 'faqs', 'faqpage', 'faq-page'],
       'pages' => ['faqs', 'private-page', 'another-page']
@@ -75,6 +77,7 @@ tabs:
 
 This will add a new "LLMs" tab to your site settings in the panel, where you can configure:
 - Enable/disable the LLMs.txt generation
+- Enable/disable the XML sitemap generation
 - Enable/disable caching
 - Set cache duration
 - Enable/disable adding trailing slashes to URLs
@@ -108,6 +111,7 @@ site/
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
 | `enabled` | boolean | `true` | Enable or disable serving llms.txt |
+| `sitemap_enabled` | boolean | `true` | Enable or disable XML sitemap generation |
 | `cache` | boolean | `false` | Enable or disable caching |
 | `cache.duration` | integer | `60` | Cache duration in minutes |
 | `add_trailing_slash` | boolean | `true` | Whether to add trailing slashes to URLs in the output |
@@ -132,9 +136,12 @@ For example:
 
 ## Usage
 
-Once installed, the plugin automatically sets up a route at `yourdomain.com/llms.txt` that generates the LLMs information.
+Once installed, the plugin automatically sets up two routes:
 
-The generated content will be in Markdown format with proper Markdown links for pages and their descriptions. All HTML tags are automatically stripped from descriptions and metadata to ensure clean, plain text output.
+- `yourdomain.com/llms.txt` - Generates the LLMs information in Markdown format
+- `yourdomain.com/sitemap.xml` - Generates an XML sitemap using the same page filtering
+
+The LLMs content will be in Markdown format with proper Markdown links for pages and their descriptions. The sitemap will be in standard XML format following the sitemap protocol. All HTML tags are automatically stripped from descriptions and metadata to ensure clean, plain text output.
 
 ### Automatic Cache Clearing
 
@@ -143,9 +150,11 @@ The plugin automatically clears its cache when:
 - Page properties change (status, slug, title, template)
 - Site information is updated
 
-This ensures that the `llms.txt` content is always up-to-date with your website's content.
+This ensures that both the `llms.txt` content and `sitemap.xml` are always up-to-date with your website's content.
 
 ### Example Output
+
+#### LLMs.txt Output
 
 ```markdown
 # Your Website Title
@@ -163,14 +172,45 @@ Generated on: 2023-06-15 12:34:56
 - [Contact](https://example.com/contact/) - Get in touch with us
 ```
 
+#### Sitemap.xml Output
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://example.com/</loc>
+    <lastmod>2023-06-15T12:34:56+00:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://example.com/about/</loc>
+    <lastmod>2023-06-10T08:20:15+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://example.com/products/</loc>
+    <lastmod>2023-06-12T14:45:30+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+</urlset>
+```
+
 ## Static Site Generation
 
-If you're using a static site generator with Kirby, make sure to include the `llms.txt` route in your static routes:
+If you're using a static site generator with Kirby, make sure to include both routes in your static routes:
 
 ```php
 array_push($staticRoutes, [
   'path' => 'llms.txt', 
   'route' => 'llms.txt'
+]);
+
+array_push($staticRoutes, [
+  'path' => 'sitemap.xml', 
+  'route' => 'sitemap.xml'
 ]);
 ```
 

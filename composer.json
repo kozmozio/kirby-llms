@@ -3,7 +3,7 @@
     "description": "A Kirby CMS plugin that generates an llms.txt file for Large Language Models",
     "type": "kirby-plugin",
     "license": "MIT",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "homepage": "https://github.com/kozmozio/kirby-llms#readme",
     "authors": [
         {
