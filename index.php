@@ -10,8 +10,10 @@
  * @license   MIT
  */
 
+use Kirby\Cms\App as Kirby;
+
 // @include_once __DIR__ . '/vendor/autoload.php';
-require_once __DIR__ . '/helpers.php';
+require_once __DIR__ . '/src/Plugin.php';
 
 Kirby::plugin('kozmozio/llms', [
     'options' => require_once __DIR__ . '/config.php',
@@ -21,73 +23,15 @@ Kirby::plugin('kozmozio/llms', [
         [
             'pattern' => 'llms.txt',
             'action' => function () {
-                // Get plugin settings
-                $settings = llms();
-                
-                // Check if the plugin is enabled
-                if (!$settings['enabled']) {
-                    return new Kirby\Http\Response('LLMs.txt is disabled', 'text/plain', 404);
-                }
-                
-                // Check if caching is enabled
-                if ($settings['cache']) {
-                    $cache = kirby()->cache('kozmozio.llms');
-                    $cacheId = 'llms_content';
-                    
-                    // Try to get from cache first
-                    $content = $cache->get($cacheId);
-                    
-                    if ($content) {
-                        return new Kirby\Http\Response($content, 'text/plain');
-                    }
-                }
-                
-                // Generate the content
-                $content = generateLlmsContent($settings);
-                
-                // Cache the content if caching is enabled
-                if ($settings['cache']) {
-                    $cache->set($cacheId, $content, $settings['cache.duration'] * 60);
-                }
-                
-                // Return the content as a plain text response
-                return new Kirby\Http\Response($content, 'text/plain');
+                $plugin = new \Kozmozio\LLMs\Plugin();
+                return $plugin->response();
             }
         ],
         [
             'pattern' => 'sitemap.xml',
             'action' => function () {
-                // Get plugin settings
-                $settings = llms();
-                
-                // Check if sitemap is enabled
-                if (!$settings['sitemap_enabled']) {
-                    return new Kirby\Http\Response('Sitemap is disabled', 'text/plain', 404);
-                }
-                
-                // Check if caching is enabled
-                if ($settings['cache']) {
-                    $cache = kirby()->cache('kozmozio.llms');
-                    $cacheId = 'sitemap_content';
-                    
-                    // Try to get from cache first
-                    $content = $cache->get($cacheId);
-                    
-                    if ($content) {
-                        return new Kirby\Http\Response($content, 'application/xml');
-                    }
-                }
-                
-                // Generate the sitemap content
-                $content = generateSitemapContent($settings);
-                
-                // Cache the content if caching is enabled
-                if ($settings['cache']) {
-                    $cache->set($cacheId, $content, $settings['cache.duration'] * 60);
-                }
-                
-                // Return the content as XML response
-                return new Kirby\Http\Response($content, 'application/xml');
+                $plugin = new \Kozmozio\LLMs\Plugin();
+                return $plugin->sitemapResponse();
             }
         ]
     ],
@@ -95,16 +39,16 @@ Kirby::plugin('kozmozio/llms', [
     // Register the hooks to clear cache when content changes
     'hooks' => [
         'page.create:after' => function () {
-            llms_clear_cache();
+            \Kozmozio\LLMs\Plugin::clearCache();
         },
         'page.update:after' => function () {
-            llms_clear_cache();
+            \Kozmozio\LLMs\Plugin::clearCache();
         },
         'page.delete:after' => function () {
-            llms_clear_cache();
+            \Kozmozio\LLMs\Plugin::clearCache();
         },
         'site.update:after' => function () {
-            llms_clear_cache();
+            \Kozmozio\LLMs\Plugin::clearCache();
         }
     ],
     
