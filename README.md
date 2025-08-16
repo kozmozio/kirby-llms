@@ -16,6 +16,7 @@ This plugin creates an `llms.txt` file that provides structured information abou
 - Creates proper Markdown links for pages with trailing slashes (configurable)
 - Strips HTML tags from descriptions and metadata for clean output
 - Configurable exclusion of pages and templates
+- Configurable inclusion of pages that override exclusions
 - Automatic cache clearing when content changes
 - Supports configuration via your site's main config.php file
 - Panel integration for easy configuration through the Kirby admin interface
@@ -51,6 +52,9 @@ return [
     'exclude' => [
       'templates' => ['error', 'faq', 'faqs', 'faqpage', 'faq-page'],
       'pages' => ['faqs', 'private-page', 'another-page']
+    ],
+    'include' => [
+      'pages' => ['important-page', 'always-visible'] // Pages to always include despite exclusions
     ]
   ]
 ];
@@ -69,10 +73,10 @@ unlisted: true
 
 tabs:
   # Your existing tabs...
-  
+
   # LLMs settings tab
-  llms:
-    extends: tabs/llms
+  llms: kozmoz/llms
+    
 ```
 
 This will add a new "LLMs" tab to your site settings in the panel, where you can configure:
@@ -82,6 +86,7 @@ This will add a new "LLMs" tab to your site settings in the panel, where you can
 - Set cache duration
 - Enable/disable adding trailing slashes to URLs
 - Exclude templates and pages
+- Include pages that should always be visible despite exclusions
 
 ### Blueprint Structure
 
@@ -115,8 +120,9 @@ site/
 | `cache` | boolean | `false` | Enable or disable caching |
 | `cache.duration` | integer | `60` | Cache duration in minutes |
 | `add_trailing_slash` | boolean | `true` | Whether to add trailing slashes to URLs in the output |
-| `exclude.templates` | array | `['error', 'faq', 'faqs', 'faqpage', 'faq-page']` | Templates to exclude from the output |
+| `exclude.templates` | array | `['error']` | Templates to exclude from the output |
 | `exclude.pages` | array | `[]` | Pages to exclude from the output |
+| `include.pages` | array | `[]` | Pages to always include despite exclusions |
 
 ### Excluding Pages
 
@@ -133,6 +139,35 @@ For example:
   'pages' => ['about', 'blog/private-post', 'team-member', 'faqs']
 ]
 ```
+
+### Including Pages (Override Exclusions)
+
+You can specify pages that should always be included in the output, even if they would normally be excluded by template or page exclusion rules. This is useful when you want to exclude a template globally but include specific pages that use that template.
+
+The `include.pages` option overrides all exclusion rules and uses the same matching logic as exclusions:
+
+- Exact page ID or URI match
+- Child pages of included parents
+- Pages with URIs containing the included string
+
+For example:
+```php
+'include' => [
+  'pages' => ['faqs', 'important-faq', 'contact']
+],
+'exclude' => [
+  'templates' => ['faqs', 'contact'], // These templates are excluded
+  'pages' => ['private-page']
+]
+```
+
+In this example:
+- All `faqs` and `contact` template pages are excluded by default
+- But pages under `faqs/` (like `faqs/question-one`) will be included because `faqs` is in the include list
+- The `contact` page will be included despite using the excluded `contact` template
+- Any page with `important-faq` in its URI will be included
+
+**Include rules always take precedence over exclude rules.**
 
 ## Usage
 

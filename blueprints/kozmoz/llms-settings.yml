@@ -69,4 +69,9 @@ fields:
     type: tags
     label: Exclude Pages
     default: faqs
-    help: Pages to exclude from the LLMs.txt output (by slug or URI) 
+    help: Pages to exclude from the LLMs.txt output (by slug ) 
+  llms_includePages:
+    type: tags
+    label: Include Pages
+    default: faqs
+    help: Always included despite exclusions
