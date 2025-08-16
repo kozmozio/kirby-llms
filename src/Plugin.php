@@ -293,13 +293,13 @@ class Plugin
                 
                 // Direct match with ID or URI
                 if ($pageId === $includedPage || $pageUri === $includedPage) {
-                    error_log("DEBUG LLMS Plugin - Page '{$pageUri}' is explicitly included, skipping exclusion checks!");
+                    // error_log("DEBUG LLMS Plugin - Page '{$pageUri}' is explicitly included, skipping exclusion checks!");
                     return false;
                 }
                 
                 // Check if page is a child of an included parent
                 if (Str::startsWith($pageUri, $includedPage . '/')) {
-                    error_log("DEBUG LLMS Plugin - Page '{$pageUri}' is child of included parent '{$includedPage}', skipping exclusion checks!");
+                    // error_log("DEBUG LLMS Plugin - Page '{$pageUri}' is child of included parent '{$includedPage}', skipping exclusion checks!");
                     return false;
                 }
                 
@@ -307,7 +307,7 @@ class Plugin
                 $pageParts = explode('/', $pageUri);
                 foreach ($pageParts as $part) {
                     if ($part === $includedPage) {
-                        error_log("DEBUG LLMS Plugin - Page '{$pageUri}' has path part '{$part}' matching included page '{$includedPage}', skipping exclusion checks!");
+                        // error_log("DEBUG LLMS Plugin - Page '{$pageUri}' has path part '{$part}' matching included page '{$includedPage}', skipping exclusion checks!");
                         return false;
                     }
                 }
@@ -318,11 +318,11 @@ class Plugin
         if (isset($this->options['exclude']['templates']) && is_array($this->options['exclude']['templates'])) {
             $template = $page->template()->name();
             // Debug: Log template checking
-            error_log("DEBUG LLMS Plugin - Checking template '{$template}' for page '{$pageUri}' against excluded templates: " . implode(', ', $this->options['exclude']['templates']));
+            // error_log("DEBUG LLMS Plugin - Checking template '{$template}' for page '{$pageUri}' against excluded templates: " . implode(', ', $this->options['exclude']['templates']));
             
             // Direct template match
             if (in_array($template, $this->options['exclude']['templates'])) {
-                error_log("DEBUG LLMS Plugin - Template '{$template}' is excluded!");
+                // error_log("DEBUG LLMS Plugin - Template '{$template}' is excluded!");
                 return true;
             }
             
@@ -332,7 +332,7 @@ class Plugin
             foreach ($this->options['exclude']['templates'] as $excludedTemplate) {
                 foreach ($pathParts as $pathPart) {
                     if ($pathPart === $excludedTemplate) {
-                        error_log("DEBUG LLMS Plugin - Page path part '{$pathPart}' matches excluded template '{$excludedTemplate}' for page '{$pageUri}'!");
+                        // error_log("DEBUG LLMS Plugin - Page path part '{$pathPart}' matches excluded template '{$excludedTemplate}' for page '{$pageUri}'!");
                         return true;
                     }
                 }
@@ -388,19 +388,19 @@ class Plugin
         $pages = $this->site->index()->listed();
         
         // Debug: Log all pages before filtering
-        error_log("DEBUG LLMS Plugin - Total pages before filtering: " . $pages->count());
+        // error_log("DEBUG LLMS Plugin - Total pages before filtering: " . $pages->count());
 
         // Use the comprehensive isExcluded method for all filtering
         $pages = $pages->filter(function (Page $page) {
             $excluded = $this->isExcluded($page);
             if ($excluded) {
-                error_log("DEBUG LLMS Plugin - Excluding page: " . $page->uri() . " (template: " . $page->template()->name() . ")");
+                // error_log("DEBUG LLMS Plugin - Excluding page: " . $page->uri() . " (template: " . $page->template()->name() . ")");
             }
             return !$excluded;
         });
         
         // Debug: Log pages after filtering
-        error_log("DEBUG LLMS Plugin - Total pages after filtering: " . $pages->count());
+        // error_log("DEBUG LLMS Plugin - Total pages after filtering: " . $pages->count());
 
         return $pages;
     }
@@ -411,10 +411,10 @@ class Plugin
     protected function generateSitemapXml(): string
     {
         // Debug: Log exclusion settings
-        error_log("DEBUG LLMS Plugin - Exclusion settings:");
-        error_log("Excluded templates: " . print_r($this->options['exclude']['templates'] ?? [], true));
-        error_log("Excluded pages: " . print_r($this->options['exclude']['pages'] ?? [], true));
-        error_log("Included pages: " . print_r($this->options['include']['pages'] ?? [], true));
+        // error_log("DEBUG LLMS Plugin - Exclusion settings:");
+        // error_log("Excluded templates: " . print_r($this->options['exclude']['templates'] ?? [], true));
+        // error_log("Excluded pages: " . print_r($this->options['exclude']['pages'] ?? [], true));
+        // error_log("Included pages: " . print_r($this->options['include']['pages'] ?? [], true));
         
         $pages = $this->getFilteredPages();
         $addTrailing = $this->options['add_trailing_slash'] ?? true;
