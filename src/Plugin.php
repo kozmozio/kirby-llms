@@ -98,7 +98,7 @@ class Plugin
         $options = array_merge($defaults, $config);
         
         // Debug: Log config from files
-        error_log("DEBUG LLMS Plugin - Config from files: " . print_r($config, true));
+        // error_log("DEBUG LLMS Plugin - Config from files: " . print_r($config, true));
 
         // Panel overrides if site content available
         if ($this->site && $this->site->content()) {
@@ -143,7 +143,7 @@ class Plugin
         }
         
         // Debug: Log final options
-        error_log("DEBUG LLMS Plugin - Final options: " . print_r($options, true));
+        // error_log("DEBUG LLMS Plugin - Final options: " . print_r($options, true));
 
         return $options;
     }
