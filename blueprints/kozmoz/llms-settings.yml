@@ -7,8 +7,16 @@ fields:
   info:
     type: info
     label: About
+    theme: positive
     text: >
-      Configure how the LLMs.txt file is generated for Large Language Models.
+      Configure how the LLMs.txt file is generated for Large Language Models.       
+      Open <a href="{{site.url}}/llms.txt" target="_blank">llms.txt</a> or
+       <a href="{{site.url}}/sitemap.xml" target="_blank">sitemap.xml</a> to see the output.
+    width: 1/2
+  description:
+    type: textarea
+    label: Description
+    width: 1/2
   sitemap_enabled:
     type: toggle
     label: Enable Sitemap.xml
@@ -65,13 +73,21 @@ fields:
     label: Exclude Templates
     default: error,faq,faqs,faqpage,faq-page
     help: Templates to exclude from the LLMs.txt output
+
   llms_excludePages:
-    type: tags
-    label: Exclude Pages
-    default: faqs
-    help: Pages to exclude from the LLMs.txt output (by slug ) 
+    label: Exclude Pagzes
+    type: multiselect
+    help: Pages to exclude from the LLMs.txt output
+    max: 100 
+    options:
+      type: query
+      query: site.index.listed
+
   llms_includePages:
-    type: tags
     label: Include Pages
-    default: faqs
-    help: Always included despite exclusions
+    help: Always include these pages in the LLMs.txt, even if they match exclusion rules.
+    type: multiselect
+    max: 100 
+    options:
+      type: query
+      query: site.index.listed

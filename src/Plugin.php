@@ -234,10 +234,12 @@ class Plugin
 
         // Description: prefer metaDescription, fallback to description
         $description = '';
-        if ($this->site->metaDescription()->isNotEmpty()) {
-            $description = $this->site->metaDescription()->value();
+        if ($this->site->llms_description()->isNotEmpty()) {
+            $description = $this->site->llms_description()->value();
         } elseif ($this->site->description()->isNotEmpty()) {
             $description = $this->site->description()->value();
+        } else if ($this->site->metaDescription()->isNotEmpty()) {
+            $description = $this->site->metaDescription()->value();
         }
 
         if (!empty($description)) {
