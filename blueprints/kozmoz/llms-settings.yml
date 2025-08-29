@@ -13,9 +13,9 @@ fields:
       Open <a href="{{site.url}}/llms.txt" target="_blank">llms.txt</a> or
        <a href="{{site.url}}/sitemap.xml" target="_blank">sitemap.xml</a> to see the output.
     width: 1/2
-  description:
+  llms_description:
     type: textarea
-    label: Description
+    label: Site Description
     width: 1/2
   sitemap_enabled:
     type: toggle
@@ -75,7 +75,7 @@ fields:
     help: Templates to exclude from the LLMs.txt output
 
   llms_excludePages:
-    label: Exclude Pagzes
+    label: Exclude Pages
     type: multiselect
     help: Pages to exclude from the LLMs.txt output
     max: 100 
