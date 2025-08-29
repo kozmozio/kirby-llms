@@ -10,6 +10,7 @@ All notable changes to the kirby-llms plugin will be documented in this file.
 - Support for dynamic page selection with `multiselect` fields
 - Query-based page inclusion/exclusion using `site.index.listed`
 - HTML links in info field that open in new windows
+-
 
 ### Changed
 - Updated description priority: `llms_description` > `description` > `metaDescription`
@@ -21,7 +22,7 @@ All notable changes to the kirby-llms plugin will be documented in this file.
 - Fixed page exclusion logic to properly handle nested pages
 - Improved template exclusion to work with page paths
 - Enhanced include page logic to override exclusions correctly
-
+- Double homepage listing in sitemap.xml fixed.
 ## [1.0.0] - Initial Release
 
 ### Added
