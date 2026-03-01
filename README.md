@@ -17,6 +17,7 @@ This plugin creates an `llms.txt` file that provides structured information abou
 - Strips HTML tags from descriptions and metadata for clean output
 - Configurable exclusion of pages and templates
 - Configurable inclusion of pages that override exclusions
+- Groups pages by parent page name or template type with section headings (e.g. `## Blog`, `## Products`)
 - Automatic cache clearing when content changes
 - Supports configuration via your site's main config.php file
 - Panel integration for easy configuration through the Kirby admin interface
@@ -48,6 +49,7 @@ return [
     'cache' => true,
     'cache.duration' => 60, // minutes
     'add_trailing_slash' => true, // Whether to add trailing slashes to URLs
+    'group_by' => 'parent', // Group pages by: 'parent', 'template', or 'none'
     'sitemap_enabled' => true, // Enable XML sitemap generation
     'exclude' => [
       'templates' => ['error', 'faq', 'faqs', 'faqpage', 'faq-page'],
@@ -85,6 +87,7 @@ This will add a new "LLMs" tab to your site settings in the panel, where you can
 - Enable/disable caching
 - Set cache duration
 - Enable/disable adding trailing slashes to URLs
+- Choose page grouping strategy (by parent, by template, or no grouping)
 - Exclude templates and pages
 - Include pages that should always be visible despite exclusions
 
@@ -120,6 +123,7 @@ site/
 | `cache` | boolean | `false` | Enable or disable caching |
 | `cache.duration` | integer | `60` | Cache duration in minutes |
 | `add_trailing_slash` | boolean | `true` | Whether to add trailing slashes to URLs in the output |
+| `group_by` | string | `'parent'` | Group pages by: `'parent'` (parent page name), `'template'` (template type), or `'none'` (flat list) |
 | `exclude.templates` | array | `['error']` | Templates to exclude from the output |
 | `exclude.pages` | array | `[]` | Pages to exclude from the output |
 | `include.pages` | array | `[]` | Pages to always include despite exclusions |
@@ -190,6 +194,34 @@ This ensures that both the `llms.txt` content and `sitemap.xml` are always up-to
 ### Example Output
 
 #### LLMs.txt Output
+
+With default `group_by: parent`:
+
+```markdown
+# Your Website Title
+
+> Your Website Title is your website description
+
+Generated on: 2023-06-15 12:34:56
+
+## Blog
+
+- [Article One](https://example.com/blog/article-one/) - Our first post
+- [Article Two](https://example.com/blog/article-two/) - Our second post
+
+## Products
+
+- [Widget A](https://example.com/products/widget-a/) - Our flagship widget
+- [Widget B](https://example.com/products/widget-b/) - A compact alternative
+
+## Pages
+
+- [Home](https://example.com/) - Welcome to our website
+- [About Us](https://example.com/about/) - Learn more about our company
+- [Contact](https://example.com/contact/) - Get in touch with us
+```
+
+With `group_by: none` (flat list):
 
 ```markdown
 # Your Website Title

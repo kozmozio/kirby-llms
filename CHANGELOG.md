@@ -2,7 +2,15 @@
 
 All notable changes to the kirby-llms plugin will be documented in this file.
 
-## [1.0.3] 
+## [1.0.4]
+
+### Added
+- Page grouping in LLMs.txt output with section headings (e.g. `## Blog`, `## Products`, `## Pages`)
+- New `group_by` config option: `'parent'` (group by parent page title), `'template'` (group by template name), or `'none'` (original flat list)
+- Panel select field `llms_group_by` for configuring grouping strategy via Kirby admin interface
+- Top-level and ungrouped pages are collected under a `## Pages` section at the end
+
+## [1.0.3]
 
 ### Added
 - New `llms_description` field in panel settings for custom site description

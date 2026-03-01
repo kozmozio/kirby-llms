@@ -69,6 +69,7 @@ class Plugin
             'cache' => false,
             'cache.duration' => 60,
             'add_trailing_slash' => true,
+            'group_by' => 'parent',
             'sitemap_enabled' => true,
             'exclude' => [
                 'templates' => ['error'],
@@ -139,6 +140,12 @@ class Plugin
             }
             if ($content->has('sitemap_enabled')) {
                 $options['sitemap_enabled'] = $content->sitemap_enabled()->toBool();
+            }
+            if ($content->has('llms_group_by')) {
+                $groupBy = $content->llms_group_by()->value();
+                if (in_array($groupBy, ['parent', 'template', 'none'])) {
+                    $options['group_by'] = $groupBy;
+                }
             }
         }
         
@@ -223,6 +230,57 @@ class Plugin
     }
 
     /**
+     * Format a single page as a Markdown list item
+     *
+     * @param \Kirby\Cms\Page $page
+     * @param bool $addTrailing
+     * @return string
+     */
+    protected function formatPageLine(Page $page, bool $addTrailing): string
+    {
+        $url = $page->url();
+        if ($addTrailing) {
+            $url = $this->ensureTrailingSlash($url);
+        }
+        $title = $page->title()->value();
+        $desc = $page->description()->isNotEmpty() ? $this->cleanText($page->description()->value()) : '';
+        return "- [{$title}]({$url})" . ($desc ? " - {$desc}" : '');
+    }
+
+    /**
+     * Group pages by parent title or template name
+     *
+     * @param \Kirby\Cms\Pages $pages
+     * @param string $groupBy 'parent' or 'template'
+     * @return array<string, \Kirby\Cms\Page[]>
+     */
+    protected function groupPages(Pages $pages, string $groupBy): array
+    {
+        $groups = [];
+
+        foreach ($pages as $page) {
+            if ($groupBy === 'template') {
+                $key = $page->template()->name();
+                $key = $key === 'default' ? 'Pages' : ucfirst($key);
+            } else {
+                // group by parent
+                $parent = $page->parent();
+                $key = ($parent && $parent->depth() > 0) ? $parent->title()->value() : 'Pages';
+            }
+            $groups[$key][] = $page;
+        }
+
+        // Move 'Pages' (ungrouped) to the end
+        if (isset($groups['Pages'])) {
+            $pagesGroup = $groups['Pages'];
+            unset($groups['Pages']);
+            $groups['Pages'] = $pagesGroup;
+        }
+
+        return $groups;
+    }
+
+    /**
      * Generate the LLMs text content
      *
      * @return string
@@ -247,24 +305,30 @@ class Plugin
         }
 
         $output .= "Generated on: " . date('Y-m-d H:i:s') . "\n\n";
-        $output .= "## Docs\n\n";
 
         $pages = $this->getFilteredPages();
         $addTrailing = $this->options['add_trailing_slash'] ?? true;
+        $groupBy = $this->options['group_by'] ?? 'parent';
 
-        $lines = [];
-        foreach ($pages as $page) {
-            $url = $page->url();
-            if ($addTrailing) {
-                $url = $this->ensureTrailingSlash($url);
+        if ($groupBy === 'none') {
+            $output .= "## Docs\n\n";
+            $lines = [];
+            foreach ($pages as $page) {
+                $lines[] = $this->formatPageLine($page, $addTrailing);
             }
-            $title = $page->title()->value();
-            $desc = $page->description()->isNotEmpty() ? $this->cleanText($page->description()->value()) : '';
-            $lines[] = "- [{$title}]({$url})" . ($desc ? " - {$desc}" : '');
-        }
-
-        if (!empty($lines)) {
-            $output .= implode("\n", $lines) . "\n"; // exactly one blank line between items
+            if (!empty($lines)) {
+                $output .= implode("\n", $lines) . "\n";
+            }
+        } else {
+            $groups = $this->groupPages($pages, $groupBy);
+            foreach ($groups as $heading => $groupPages) {
+                $output .= "## {$heading}\n\n";
+                $lines = [];
+                foreach ($groupPages as $page) {
+                    $lines[] = $this->formatPageLine($page, $addTrailing);
+                }
+                $output .= implode("\n", $lines) . "\n\n";
+            }
         }
 
         return $output;

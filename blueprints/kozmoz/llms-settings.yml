@@ -55,13 +55,23 @@ fields:
       llms_cache: true
   llms_add_trailing_slash:
     type: toggle
-    label: Add Trailing Slash 
-    text: 
+    label: Add Trailing Slash
+    text:
       - Disabled
       - Enabled
     default: true
     width: 1/4
     help: Add "/" at the end of urls.
+  llms_group_by:
+    type: select
+    label: Group pages by
+    default: parent
+    width: 1/4
+    help: How to group pages in the LLMs.txt output
+    options:
+      parent: Parent page name
+      template: Template type
+      none: No grouping (flat list)
 
   excludeTemplatesHeadline:
     type: headline
