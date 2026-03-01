@@ -97,7 +97,7 @@ class Plugin
 
         // Merge defaults and config
         $options = array_merge($defaults, $config);
-        
+
         // Debug: Log config from files
         // error_log("DEBUG LLMS Plugin - Config from files: " . print_r($config, true));
 
@@ -148,7 +148,7 @@ class Plugin
                 }
             }
         }
-        
+
         // Debug: Log final options
         // error_log("DEBUG LLMS Plugin - Final options: " . print_r($options, true));
 
@@ -206,7 +206,8 @@ class Plugin
      * @param string $text The text to clean
      * @return string The cleaned text
      */
-    protected function cleanText($text) {
+    protected function cleanText($text)
+    {
         // Strip HTML tags
         $text = strip_tags($text);
         // Convert HTML entities to their corresponding characters
@@ -222,7 +223,8 @@ class Plugin
      * @param string $url The URL to process
      * @return string The URL with a trailing slash
      */
-    protected function ensureTrailingSlash($url) {
+    protected function ensureTrailingSlash($url)
+    {
         if (substr($url, -1) !== '/') {
             return $url . '/';
         }
@@ -348,7 +350,7 @@ class Plugin
         // Get the page ID and URI for comparison
         $pageId = $page->id();
         $pageUri = $page->uri();
-        
+
         // Check if page is explicitly included (overrides all exclusions)
         if (isset($this->options['include']['pages']) && is_array($this->options['include']['pages'])) {
             foreach ($this->options['include']['pages'] as $includedPage) {
@@ -356,19 +358,19 @@ class Plugin
                 if (empty($includedPage)) {
                     continue;
                 }
-                
+
                 // Direct match with ID or URI
                 if ($pageId === $includedPage || $pageUri === $includedPage) {
                     // error_log("DEBUG LLMS Plugin - Page '{$pageUri}' is explicitly included, skipping exclusion checks!");
                     return false;
                 }
-                
+
                 // Check if page is a child of an included parent
                 if (Str::startsWith($pageUri, $includedPage . '/')) {
                     // error_log("DEBUG LLMS Plugin - Page '{$pageUri}' is child of included parent '{$includedPage}', skipping exclusion checks!");
                     return false;
                 }
-                
+
                 // Check if any part of the URI path matches the included page
                 $pageParts = explode('/', $pageUri);
                 foreach ($pageParts as $part) {
@@ -379,19 +381,19 @@ class Plugin
                 }
             }
         }
-        
+
         // Check excluded templates
         if (isset($this->options['exclude']['templates']) && is_array($this->options['exclude']['templates'])) {
             $template = $page->template()->name();
             // Debug: Log template checking
             // error_log("DEBUG LLMS Plugin - Checking template '{$template}' for page '{$pageUri}' against excluded templates: " . implode(', ', $this->options['exclude']['templates']));
-            
+
             // Direct template match
             if (in_array($template, $this->options['exclude']['templates'])) {
                 // error_log("DEBUG LLMS Plugin - Template '{$template}' is excluded!");
                 return true;
             }
-            
+
             // Check if page path matches excluded template names
             // e.g., pages under 'tags/' should be excluded if 'tag' or 'tags' is in excluded templates
             $pathParts = explode('/', $pageUri);
@@ -404,7 +406,7 @@ class Plugin
                 }
             }
         }
-        
+
         // Check excluded pages
         if (isset($this->options['exclude']['pages']) && is_array($this->options['exclude']['pages'])) {
             foreach ($this->options['exclude']['pages'] as $excludedPage) {
@@ -413,18 +415,18 @@ class Plugin
                 if (empty($excludedPage)) {
                     continue;
                 }
-                
+
                 // Direct match with ID or URI
                 if ($pageId === $excludedPage || $pageUri === $excludedPage) {
                     return true;
                 }
-                
+
                 // Check if page is a child of an excluded parent
                 // This handles cases like excluding 'projects' excludes 'projects/jeff-talks'
                 if (Str::startsWith($pageUri, $excludedPage . '/')) {
                     return true;
                 }
-                
+
                 // Check if page is in a subfolder but has the same name
                 // For example, if 'inan-olcer' is excluded, 'team/inan-olcer' should also be excluded
                 $pageParts = explode('/', $pageUri);
@@ -432,7 +434,7 @@ class Plugin
                 if ($pageName === $excludedPage) {
                     return true;
                 }
-                
+
                 // Check if any part of the URI path matches the excluded page
                 // This handles nested exclusions more comprehensively
                 foreach ($pageParts as $part) {
@@ -442,7 +444,7 @@ class Plugin
                 }
             }
         }
-        
+
         return false;
     }
 
@@ -452,7 +454,7 @@ class Plugin
     protected function getFilteredPages(): Pages
     {
         $pages = $this->site->index()->listed();
-        
+
         // Debug: Log all pages before filtering
         // error_log("DEBUG LLMS Plugin - Total pages before filtering: " . $pages->count());
 
@@ -464,10 +466,9 @@ class Plugin
             }
             return !$excluded;
         });
-        
+
         // Debug: Log pages after filtering
         // error_log("DEBUG LLMS Plugin - Total pages after filtering: " . $pages->count());
-
         return $pages;
     }
 
@@ -481,24 +482,17 @@ class Plugin
         // error_log("Excluded templates: " . print_r($this->options['exclude']['templates'] ?? [], true));
         // error_log("Excluded pages: " . print_r($this->options['exclude']['pages'] ?? [], true));
         // error_log("Included pages: " . print_r($this->options['include']['pages'] ?? [], true));
-        
+
         $pages = $this->getFilteredPages();
         $addTrailing = $this->options['add_trailing_slash'] ?? true;
 
         $xml = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
         $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
 
-        // Homepage
         $siteUrl = $this->site->url();
         if ($addTrailing && substr($siteUrl, -1) !== '/') {
             $siteUrl .= '/';
         }
-        $xml .= '  <url>' . "\n";
-        $xml .= '    <loc>' . htmlspecialchars($siteUrl) . '</loc>' . "\n";
-        $xml .= '    <lastmod>' . date('Y-m-d\TH:i:s+00:00') . '</lastmod>' . "\n";
-        $xml .= '    <changefreq>daily</changefreq>' . "\n";
-        $xml .= '    <priority>1.0</priority>' . "\n";
-        $xml .= '  </url>' . "\n";
 
         foreach ($pages as $page) {
             $url = $page->url();
@@ -544,4 +538,4 @@ class Plugin
 
         return new Response($content, 'application/xml');
     }
-} 
+}
